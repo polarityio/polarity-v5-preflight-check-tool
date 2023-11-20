@@ -21,9 +21,13 @@ function getIntegrationsFromDisk(integrationsDirectory = '/app/polarity-server/i
       let hasConfigFile = false;
       let configJs = {};
       let packageJson = {};
+      let cwd = process.cwd();
+
       if (fs.existsSync(configFilePath)) {
         hasConfigFile = true;
+        process.chdir(dirPath);
         configJs = require(configFilePath);
+        process.chdir(cwd);
       }
 
       if (fs.existsSync(packageJsonPath)) {
