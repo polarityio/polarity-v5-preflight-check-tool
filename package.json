@@ -1,0 +1,17 @@
+{
+  "main": "./main.js",
+  "name": "polarity-v5-preflight-check-tool",
+  "version": "3.0.0",
+  "private": true,
+  "dependencies": {
+    "async": "^3.2.4",
+    "winston": "^3.3.3",
+    "polarity-node-rest-api": "github:polarityio/polarity-node-rest-api#0.0.21-beta",
+    "yargs": "^16.2.0",
+    "statman-stopwatch": "^2.13.0",
+    "dotenv": "^16.0.2",
+    "pg": "^8.11.3",
+    "byte-size": "^8.1.1",
+    "lodash": "^4.17.21"
+  }
+}
