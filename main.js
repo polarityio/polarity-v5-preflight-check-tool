@@ -8,8 +8,13 @@ const Logger = require('./logger');
 const readDirectory = promisify(fs.readdir).bind(this);
 const FgGreen = '\x1b[32m';
 const FgDefault = '\x1b[39m';
+const FgRed = '\x1b[31m';
 let pgClient;
 let environmentVariables = {};
+
+function parseErrorToReadableJSON(error) {
+  return JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+}
 
 const getDatabaseConnectionInfo = (configPath, envPath) => {
   Logger.info(`Loading database configuration from env file ${envPath}`);
@@ -186,16 +191,22 @@ const checkCmd = {
 
       Logger.info({ env: environmentVariables }, 'Environment Variables');
 
-      const reporter = fs.createWriteStream('polarity-v5-upgrade-report.txt');
+      const reporter = fs.createWriteStream('polarity-upgrade-report.txt');
 
       const checksFileNames = await readDirectory('./checks');
       for (const checkFileName of checksFileNames) {
         const { check, name } = require(`./checks/${checkFileName}`);
         Logger.simpleLine(`Running check - ${name} ... `);
-        const report = await check(environmentVariables, config, polarity, pgClient, polarityPath, Logger);
-        Logger.simple(FgGreen, 'complete', FgDefault);
         reporter.write(`### ${name} ###\n\n`);
-        reporter.write(report + '\n\n\n');
+        try {
+          const report = await check(environmentVariables, config, polarity, pgClient, polarityPath, Logger);
+          Logger.simple(FgGreen, 'complete', FgDefault);
+          reporter.write(report + '\n\n\n');
+        } catch (checkError) {
+          Logger.simple(FgRed, 'error', FgDefault);
+          Logger.simple(FgRed, parseErrorToReadableJSON(checkError), FgDefault);
+          reporter.write(parseErrorToReadableJSON(checkError) + '\n\n\n');
+        }
       }
       reporter.end();
     } catch (e) {
@@ -211,7 +222,7 @@ const checkCmd = {
         await pgClient.end();
       }
 
-      Logger.simple('Pre-flight check complete.  Report generated in upgrade-report.txt');
+      Logger.simple('Pre-flight check complete.  Report generated in polarity-upgrade-report.txt');
     }
   }
 };

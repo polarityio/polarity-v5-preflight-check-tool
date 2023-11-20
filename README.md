@@ -11,9 +11,15 @@ The Polarity v5 Pre-Flight Check Tool will generate a report to help the Polarit
 * Elastic/Splunk RPM Agent Check
 * Node Extra CA Certs Check
 * Operating System Check 
-* PostgrSQL SSL mode Check
+* PostgreSQL SSL mode Check
 * Polarity Version Check
-* Redis Env Var
+* Redis Env Var Check
+* SMTP Check
+* Polarity User Creation Check
+* Polarity CLI Integration Search Tool Check
+* Polarity Integration Auto Subscribe Check
+* Polarity CSV Loader Check
+* Polarity Annotation Manager Check
 
 ## Usage
 
@@ -36,10 +42,10 @@ Finally, to run the CLI tool ensure the `polarity-integration-auto-subscribe.sh`
 chmod a+x polarity-v5-preflight-check-tool.sh
 ```
 
-You can now run the CLI tool and pass in the required options. Here is an example with the minimum required options.  This command will generate a report file called `polarity-v5-upgrade-report.txt`.
+You can now run the CLI tool and pass in the required options. Here is an example with the minimum required options.  This command will generate a report file called `polarity-upgrade-report.txt`.
 
 ```
-./polarity-v5-preflight-check-tool.sh  --rejectUnauthorized=false --url https://localhost --username admin --password adminadmin
+sudo ./polarity-v5-preflight-check-tool.sh  --rejectUnauthorized=false --url https://localhost --username admin --password adminadmin
 ```
 
 ## All Options
