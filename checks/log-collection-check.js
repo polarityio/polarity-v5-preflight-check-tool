@@ -6,6 +6,24 @@ async function check(env, config, polarity, pgClient, polarityPath, logger) {
   const report = [];
   let result;
 
+  if (env.hasOwnProperty('POLARITY_LOG_ENABLE_SYSLOG')) {
+    report.push(`  POLARITY_LOG_ENABLE_SYSLOG: ${env.POLARITY_LOG_ENABLE_SYSLOG}`);
+  } else {
+    report.push('  POLARITY_LOG_ENABLE_SYSLOG is not set');
+  }
+
+  if (env.hasOwnProperty('POLARITY_LOG_ENABLE_STDOUT')) {
+    report.push(`  POLARITY_LOG_ENABLE_STDOUT: ${env.POLARITY_LOG_ENABLE_STDOUT}`);
+  } else {
+    report.push('  POLARITY_LOG_ENABLE_STDOUT is not set');
+  }
+
+  if (env.hasOwnProperty('POLARITY_LOG_ENABLE_FILE')) {
+    report.push(`  POLARITY_LOG_ENABLE_FILE: ${env.POLARITY_LOG_ENABLE_FILE}`);
+  } else {
+    report.push('  POLARITY_LOG_ENABLE_FILE is not set');
+  }
+
   try {
     result = await rpmSearch('elastic');
     if (result) {
