@@ -44,9 +44,7 @@ class Logger {
   }
 
   error() {
-    if (this.level !== 'simple') {
-      this.logger.error(...arguments);
-    }
+    this.logger.error(...arguments);
   }
 
   warn() {
