@@ -7,7 +7,10 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
 
   // First Check the `.env` file
   if (env.hasOwnProperty('POLARITY_PG_CACHE_HOST')) {
-    if (env.POLARITY_PG_CACHE_HOST.endsWith('localhost') || env.POLARITY_PG_CACHE_HOST.endsWith('127.0.0.1')) {
+    if (
+      env.POLARITY_PG_CACHE_HOST.trim().endsWith('localhost') ||
+      env.POLARITY_PG_CACHE_HOST.trim().endsWith('127.0.0.1')
+    ) {
       report.push(`  POLARITY_PG_CACHE_HOST: Is Remote`);
     } else {
       report.push(`  POLARITY_PG_CACHE_HOST: Is Local`);
@@ -18,8 +21,8 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
 
   if (env.hasOwnProperty('POLARITY_SESSION_CACHE_HOST')) {
     if (
-      env.POLARITY_SESSION_CACHE_HOST.endsWith('localhost') ||
-      env.POLARITY_SESSION_CACHE_HOST.endsWith('127.0.0.1')
+      env.POLARITY_SESSION_CACHE_HOST.trim().endsWith('localhost') ||
+      env.POLARITY_SESSION_CACHE_HOST.trim().endsWith('127.0.0.1')
     ) {
       report.push(`  POLARITY_SESSION_CACHE_HOST: Is Remote`);
     } else {
@@ -31,8 +34,8 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
 
   if (env.hasOwnProperty('POLARITY_METRICS_CACHE_HOST')) {
     if (
-      env.POLARITY_METRICS_CACHE_HOST.endsWith('localhost') ||
-      env.POLARITY_METRICS_CACHE_HOST.endsWith('127.0.0.1')
+      env.POLARITY_METRICS_CACHE_HOST.trim().endsWith('localhost') ||
+      env.POLARITY_METRICS_CACHE_HOST.trim().endsWith('127.0.0.1')
     ) {
       report.push(`  POLARITY_METRICS_CACHE_HOST: Is Remote`);
     } else {
@@ -44,8 +47,8 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
 
   if (env.hasOwnProperty('POLARITY_INTEGRATION_CACHE_HOST')) {
     if (
-      env.POLARITY_INTEGRATION_CACHE_HOST.endsWith('localhost') ||
-      env.POLARITY_INTEGRATION_CACHE_HOST.endsWith('127.0.0.1')
+      env.POLARITY_INTEGRATION_CACHE_HOST.trim().endsWith('localhost') ||
+      env.POLARITY_INTEGRATION_CACHE_HOST.trim().endsWith('127.0.0.1')
     ) {
       report.push(`  POLARITY_INTEGRATION_CACHE_HOST: Is Remote`);
     } else {
@@ -56,7 +59,7 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
   }
 
   if (env.hasOwnProperty('POLARITY_DB_HOST')) {
-    if (env.POLARITY_DB_HOST.endsWith('localhost') || env.POLARITY_DB_HOST.endsWith('127.0.0.1')) {
+    if (env.POLARITY_DB_HOST.trim().endsWith('localhost') || env.POLARITY_DB_HOST.trim().endsWith('127.0.0.1')) {
       report.push(`  POLARITY_DB_HOST: Is Remote`);
     } else {
       report.push(`  POLARITY_DB_HOST: Is Local`);
@@ -74,7 +77,7 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
 
   if (postgresHost === null) {
     report.push(`  postgres.host not present in config.js`);
-  } else if (postgresHost.endsWith('localhost') || postgresHost.endsWith('127.0.0.1')) {
+  } else if (postgresHost.trim().endsWith('localhost') || postgresHost.trim().endsWith('127.0.0.1')) {
     report.push(`  postgres.host: Is Local`);
   } else {
     report.push(`  postgres.host: Is Remote`);
@@ -82,7 +85,7 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
 
   if (postgresHost2 === null) {
     report.push(`  polarity.postgres.host not present in config.js`);
-  } else if (postgresHost2.endsWith('localhost') || postgresHost2.endsWith('127.0.0.1')) {
+  } else if (postgresHost2.trim().endsWith('localhost') || postgresHost2.trim().endsWith('127.0.0.1')) {
     report.push(`  polarity.postgres.host: Is Local`);
   } else {
     report.push(`  polarity.postgres.host: Is Remote`);
@@ -91,7 +94,7 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
   let redisHost = _.get(config, 'rest.redisSessionStore.host', null);
   if (redisHost === null) {
     report.push(`  rest.redisSessionStore.host not present in config.js`);
-  } else if (redisHost.endsWith('localhost') || redisHost.endsWith('127.0.0.1')) {
+  } else if (redisHost.trim().endsWith('localhost') || redisHost.trim().endsWith('127.0.0.1')) {
     report.push(`  rest.redisSessionStore.host: Is Local`);
   } else {
     report.push(`  rest.redisSessionStore.host: Is Remote`);
@@ -100,7 +103,7 @@ function check(env, config, polarity, pgClient, polarityPath, logger) {
   let integrationRedisHost = _.get(config, 'polarity.integrations.cache.redis.host', null);
   if (integrationRedisHost === null) {
     report.push(`  polarity.integrations.cache.redis.host not present in config.js`);
-  } else if (integrationRedisHost.endsWith('localhost') || integrationRedisHost.endsWith('127.0.0.1')) {
+  } else if (integrationRedisHost.trim().endsWith('localhost') || integrationRedisHost.trim().endsWith('127.0.0.1')) {
     report.push(`  polarity.integrations.cache.redis.host: Is Local`);
   } else {
     report.push(`  polarity.integrations.cache.redis.host: Is Remote`);
