@@ -8,7 +8,7 @@ const dirToValidIntId = (intDir) => {
   return intDir.replace(/([^0-9a-zA-Z])/g, '_');
 };
 
-function getIntegrationsFromDisk(integrationsDirectory = '/app/polarity-server/integrations') {
+function getIntegrationsFromDisk(integrationsDirectory = '/app/polarity-server/integrations', logger) {
   return fs
     .readdirSync(integrationsDirectory, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
@@ -26,7 +26,14 @@ function getIntegrationsFromDisk(integrationsDirectory = '/app/polarity-server/i
       if (fs.existsSync(configFilePath)) {
         hasConfigFile = true;
         process.chdir(dirPath);
-        configJs = require(configFilePath);
+        try {
+          configJs = require(configFilePath);
+        } catch (configErr) {
+          logger.error(`Error loading config.js for ${dirName}`);
+          logger.error(configErr);
+          configJs = {};
+        }
+
         process.chdir(cwd);
       }
 
@@ -53,7 +60,7 @@ function getIntegrationsFromDisk(integrationsDirectory = '/app/polarity-server/i
 async function check(env, config, polarity, pgClient, polarityPath, logger) {
   const report = [];
   const integrations = [];
-  const integrationsFromDisk = getIntegrationsFromDisk(path.join(polarityPath, 'integrations'));
+  const integrationsFromDisk = getIntegrationsFromDisk(path.join(polarityPath, 'integrations'), logger);
 
   for (const integration of integrationsFromDisk) {
     try {
