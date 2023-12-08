@@ -4,6 +4,7 @@ const { Client } = require('pg');
 const fs = require('fs');
 const { promisify } = require('util');
 const Logger = require('./logger');
+const readline = require('readline');
 
 const readDirectory = promisify(fs.readdir).bind(this);
 const FgGreen = '\x1b[32m';
@@ -14,6 +15,26 @@ let environmentVariables = {};
 
 function parseErrorToReadableJSON(error) {
   return JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+}
+
+async function getCommandLineInfo(prompt, hideInput = false) {
+  return new Promise((resolve, reject) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    rl.question(prompt, function (info) {
+      rl.close();
+      resolve(info);
+    });
+
+    if (hideInput) {
+      rl._writeToOutput = function _writeToOutput(stringToWrite) {
+        rl.output.write('*');
+      };
+    }
+  });
 }
 
 const getDatabaseConnectionInfo = (configPath, envPath) => {
@@ -57,65 +78,67 @@ const checkCmd = {
   command: 'check',
   desc: 'Generate a v5 preflight upgrade report',
   builder: (yargs) => {
-    return yargs
-      .option('username', {
-        type: 'string',
-        nargs: 1,
-        describe: 'Polarity Username to authenticate as'
-      })
-      .option('password', {
-        type: 'string',
-        nargs: 1,
-        describe: 'Password for the given Polarity username'
-      })
-      .option('url', {
-        type: 'string',
-        demand: 'You must provide Polarity url to include schema (e.g., https://my.polarity.internal)',
-        nargs: 1,
-        describe: 'Polarity server url to include schema'
-      })
-      .option('config', {
-        type: 'string',
-        nargs: 1,
-        default: '/app/polarity-server/config/config.js',
-        describe: "Path to the Polarity Server's config file."
-      })
-      .option('env', {
-        type: 'string',
-        nargs: 1,
-        default: '/app/polarity-server/.env',
-        describe: "Path to the Polarity Server's .env file."
-      })
-      .option('polarityPath', {
-        type: 'string',
-        nargs: 1,
-        default: '/app/polarity-server',
-        describe: 'Path to the Polarity Server Directory'
-      })
-      .option('rejectUnauthorized', {
-        type: 'boolean',
-        default: true,
-        describe: 'If provided, the loader will reject unauthorized SSL connections'
-      })
-      .option('proxy', {
-        type: 'string',
-        default: '',
-        nargs: 1,
-        describe: 'If provided, the connection to the Polarity server will use the provided proxy setting'
-      })
-      .option('logging', {
-        type: 'string',
-        default: 'simple',
-        choices: ['simple', 'error', 'warn', 'info', 'debug', 'trace'],
-        nargs: 1,
-        describe: 'The logging level for the script.'
-      });
+    return (
+      yargs
+        // .option('username', {
+        //   type: 'string',
+        //   nargs: 1,
+        //   describe: 'Polarity Username to authenticate as'
+        // })
+        // .option('password', {
+        //   type: 'string',
+        //   nargs: 1,
+        //   describe: 'Password for the given Polarity username'
+        // })
+        .option('url', {
+          type: 'string',
+          default: 'https://localhost',
+          nargs: 1,
+          describe: 'Polarity server url to include schema'
+        })
+        .option('config', {
+          type: 'string',
+          nargs: 1,
+          default: '/app/polarity-server/config/config.js',
+          describe: "Path to the Polarity Server's config file."
+        })
+        .option('env', {
+          type: 'string',
+          nargs: 1,
+          default: '/app/polarity-server/.env',
+          describe: "Path to the Polarity Server's .env file."
+        })
+        .option('polarityPath', {
+          type: 'string',
+          nargs: 1,
+          default: '/app/polarity-server',
+          describe: 'Path to the Polarity Server Directory'
+        })
+        .option('rejectUnauthorized', {
+          type: 'boolean',
+          default: true,
+          describe: 'If provided, the loader will reject unauthorized SSL connections'
+        })
+        .option('proxy', {
+          type: 'string',
+          default: '',
+          nargs: 1,
+          describe: 'If provided, the connection to the Polarity server will use the provided proxy setting'
+        })
+        .option('logging', {
+          type: 'string',
+          default: 'simple',
+          choices: ['simple', 'error', 'warn', 'info', 'debug', 'trace'],
+          nargs: 1,
+          describe: 'The logging level for the script.'
+        })
+    );
   },
   handler: async (argv) => {
     const {
       url,
-      username: cliUsername,
-      password: cliPassword,
+      // username: cliUsername,
+      // password: cliPassword,
       rejectUnauthorized,
       proxy,
       logging,
@@ -128,11 +151,13 @@ const checkCmd = {
 
     require('dotenv').config({ path: env, processEnv: environmentVariables });
 
-    let envUsername = process.env.POLARITY_USERNAME;
-    let envPassword = process.env.POLARITY_PASSWORD;
+    Logger.simple(
+      'The preflight script connects to your Polarity Server via the REST API to gather pre-upgrade information.'
+    );
+    const username = await getCommandLineInfo('Enter your Polarity admin username: ');
+    const password = await getCommandLineInfo('Password: ', true);
 
-    const username = envUsername ? envUsername : cliUsername;
-    const password = envPassword ? envPassword : cliPassword;
+    Logger.simple('');
 
     if (!username || !password) {
       Logger.error('You must provide a username and password');
