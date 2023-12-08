@@ -44,10 +44,10 @@ chmod a+x polarity-v5-preflight-check-tool.sh
 
 You can now run the CLI tool and pass in the required options. Here is an example with the minimum required options.  This command will generate a report file called `polarity-upgrade-report.txt`.
 
-The provided Polarity user must be a local admin account.  You should wrap the `<PASSWORD>` in single quotes.
+When prompted for a Polarity username you must provide a local admin account.
 
 ```
-sudo ./polarity-v5-preflight-check-tool.sh  --rejectUnauthorized=false --url https://localhost --username <USERNAME> --password '<PASSWORD>'
+sudo ./polarity-v5-preflight-check-tool.sh  --rejectUnauthorized=false
 ```
 
 ## All Options
@@ -58,9 +58,7 @@ Generate a v5 preflight upgrade report
 Options:
   --help                Show help  [boolean]
   --version             Show version number  [boolean]
-  --username            Polarity Username to authenticate as  [string]
-  --password            Password for the given Polarity username  [string]
-  --url                 Polarity server url to include schema  [string] [required]
+  --url                 Polarity server url to include schema  [string] [default: "https://localhost"]
   --config              Path to the Polarity Server's config file.  [string] [default: "/app/polarity-server/config/config.js"]
   --env                 Path to the Polarity Server's .env file.  [string] [default: "/app/polarity-server/.env"]
   --polarityPath        Path to the Polarity Server Directory  [string] [default: "/app/polarity-server"]
