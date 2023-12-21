@@ -78,61 +78,49 @@ const checkCmd = {
   command: 'check',
   desc: 'Generate a v5 preflight upgrade report',
   builder: (yargs) => {
-    return (
-      yargs
-        // .option('username', {
-        //   type: 'string',
-        //   nargs: 1,
-        //   describe: 'Polarity Username to authenticate as'
-        // })
-        // .option('password', {
-        //   type: 'string',
-        //   nargs: 1,
-        //   describe: 'Password for the given Polarity username'
-        // })
-        .option('url', {
-          type: 'string',
-          default: 'https://localhost',
-          nargs: 1,
-          describe: 'Polarity server url to include schema'
-        })
-        .option('config', {
-          type: 'string',
-          nargs: 1,
-          default: '/app/polarity-server/config/config.js',
-          describe: "Path to the Polarity Server's config file."
-        })
-        .option('env', {
-          type: 'string',
-          nargs: 1,
-          default: '/app/polarity-server/.env',
-          describe: "Path to the Polarity Server's .env file."
-        })
-        .option('polarityPath', {
-          type: 'string',
-          nargs: 1,
-          default: '/app/polarity-server',
-          describe: 'Path to the Polarity Server Directory'
-        })
-        .option('rejectUnauthorized', {
-          type: 'boolean',
-          default: true,
-          describe: 'If provided, the loader will reject unauthorized SSL connections'
-        })
-        .option('proxy', {
-          type: 'string',
-          default: '',
-          nargs: 1,
-          describe: 'If provided, the connection to the Polarity server will use the provided proxy setting'
-        })
-        .option('logging', {
-          type: 'string',
-          default: 'simple',
-          choices: ['simple', 'error', 'warn', 'info', 'debug', 'trace'],
-          nargs: 1,
-          describe: 'The logging level for the script.'
-        })
-    );
+    return yargs
+      .option('url', {
+        type: 'string',
+        default: 'https://localhost',
+        nargs: 1,
+        describe: 'Polarity server url to include schema'
+      })
+      .option('config', {
+        type: 'string',
+        nargs: 1,
+        default: '/app/polarity-server/config/config.js',
+        describe: "Path to the Polarity Server's config file."
+      })
+      .option('env', {
+        type: 'string',
+        nargs: 1,
+        default: '/app/polarity-server/.env',
+        describe: "Path to the Polarity Server's .env file."
+      })
+      .option('polarityPath', {
+        type: 'string',
+        nargs: 1,
+        default: '/app/polarity-server',
+        describe: 'Path to the Polarity Server Directory'
+      })
+      .option('rejectUnauthorized', {
+        type: 'boolean',
+        default: true,
+        describe: 'If provided, the loader will reject unauthorized SSL connections'
+      })
+      .option('proxy', {
+        type: 'string',
+        default: '',
+        nargs: 1,
+        describe: 'If provided, the connection to the Polarity server will use the provided proxy setting'
+      })
+      .option('logging', {
+        type: 'string',
+        default: 'simple',
+        choices: ['simple', 'error', 'warn', 'info', 'debug', 'trace'],
+        nargs: 1,
+        describe: 'The logging level for the script.'
+      });
   },
   handler: async (argv) => {
     const {
@@ -152,9 +140,11 @@ const checkCmd = {
     require('dotenv').config({ path: env, processEnv: environmentVariables });
 
     Logger.simple(
-      'The preflight script connects to your Polarity Server via the REST API to gather pre-upgrade information.'
+      'The pre-flight script connects to your Polarity Server via the REST API to gather pre-upgrade information.'
     );
-    const username = await getCommandLineInfo('Enter your Polarity admin username: ');
+    Logger.simple('You will need to provide the script with the username and password of a local Polarity admin user.');
+
+    const username = await getCommandLineInfo('Enter a local Polarity admin username: ');
     const password = await getCommandLineInfo('Password: ', true);
 
     Logger.simple('');
